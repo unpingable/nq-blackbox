@@ -1,0 +1,26 @@
+# nq-blackbox: blackbox_exporter module configuration
+#
+# Modules define probe types. Each module is one combination of
+# protocol (http/https/dns/tcp/icmp/grpc) and the parameters the
+# exporter needs to evaluate "did this probe succeed?".
+#
+# This file is intentionally a stub. Add modules here as the probe
+# lab grows, narrowly scoped, with explicit success criteria. Avoid
+# "fail_if_body_matches" patterns that read as vibes-checks; if a
+# body match matters, it is a contract and should be documented in
+# docs/PROBE_CATALOG.md.
+#
+# Reference: https://github.com/prometheus/blackbox_exporter/blob/master/CONFIGURATION.md
+#
+# Expected first modules when the lab comes online:
+#   http_2xx:    bare HTTP/HTTPS reachability, accepts any 2xx
+#   http_strict: HTTP/HTTPS with explicit status whitelist
+#   dns_a:       DNS A record lookup against a specific resolver
+#   tcp_connect: TCP three-way handshake only
+#   tls_connect: TLS handshake + cert expiry observation
+#
+# NQ does NOT interpret blackbox modules. It only ingests the
+# resulting `probe_*` metrics with scrape-target provenance
+# (see notquery commit 1ea2000).
+
+modules: {}

@@ -1,0 +1,20 @@
+# nq-blackbox: probe targets for the local host
+#
+# These map to NQ `prometheus_targets` entries (see
+# notquery/crates/nq-core/src/config.rs `PrometheusTarget`). Each
+# entry hits the local blackbox exporter's /probe endpoint with
+# module= and target= query parameters.
+#
+# The `name` field is what NQ stamps onto every sample as
+# `scrape_target_name` — pick names that are stable and operator-
+# legible, since SQL composition keys off them.
+#
+# Stub file. Populate when the local blackbox exporter is configured
+# and the first probe targets are chosen. Expected first picks per
+# README's three buckets:
+#   overlap:      blackbox http_2xx vs nq-aggregator /metrics
+#   contradiction: HTTP probe of a service whose process/listener
+#                  NQ already reports up
+#   new vantage:  TLS expiry probe of nq.neutral.zone
+
+prometheus_targets: []

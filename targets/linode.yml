@@ -1,0 +1,19 @@
+# nq-blackbox: probe targets for the Linode external vantage
+#
+# The Linode host provides a stable external vantage for probing
+# NQ's own surfaces (nq.neutral.zone, labelwatch, etc.) from outside
+# the local network. Probes configured here run against the blackbox
+# exporter on the Linode (when deployed) and are scraped by an NQ
+# instance that ingests the resulting samples.
+#
+# Same shape as targets/local.yml: maps to NQ `prometheus_targets`.
+# The `scrape_target_name` stamped onto each sample preserves the
+# Linode vantage as part of every observation's provenance.
+#
+# Stub file. Populate when the Linode blackbox exporter is online.
+# Expected first picks:
+#   nq.neutral.zone           — overlap with internal availability
+#   labelwatch /health        — external view of a known watched app
+#   DNS A query for nq.zone   — cross-resolver/vantage DNS probe
+
+prometheus_targets: []
