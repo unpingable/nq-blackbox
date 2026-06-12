@@ -68,8 +68,8 @@ A probe candidate moves from this catalog to a working `blackbox.yml` module + `
 
 1. The module's success criteria are explicit enough to land in `blackbox.yml`.
 2. The target's `name` is operator-legible and stable.
-3. The `scripts/smoke_probe.sh` step that exercises it is implemented.
-4. NQ on the receiving side actually ingests `probe_*` samples with provenance intact (precondition: notquery `1ea2000`).
+3. The `scripts/smoke_probe.sh` step that exercises it is implemented. **(Done 2026-06-12** — the harness implements the full 5-step contract from `docs/NQ_INTEGRATION.md` with distinct exit codes per incident class. Its failure-discrimination is verified; the live-exporter pass-path needs a deploy session.)
+4. NQ on the receiving side actually ingests `probe_*` samples with provenance intact. **Precondition now genuinely satisfied:** `1ea2000` stamped provenance on the wire struct only; it was dropped before persistence. notquery **migration 058** (2026-06-12) persists `scrape_target_name`/`scrape_target_url` onto the `series` dictionary, queryable via `v_metrics`, so `smoke_probe.sh` step 4 can actually check it. **Caveat:** series identity is still `(metric_name, labels_json)`, so two probes emitting identical bare `probe_success` from different targets collapse to one series and are flagged `scrape_target_collision=1` (ambiguous, not laundered). Distinguishing them is the deferred identity migration (`notquery/docs/working/decisions/NQ_SCRAPE_TARGET_IDENTITY_SCOPE.md`). Bucket-1 probes that carry a distinguishing `instance`/`job` label avoid the collapse; bare-metric multi-target promotion waits on the identity migration.
 5. The honestly-testifies-to / inadmissible-claims rows above survive contact with the real exporter output.
 
-Until all five are true, the candidate stays in this document and nowhere else.
+Until all five are true, the candidate stays in this document and nowhere else. **As of 2026-06-12:** criteria 3 and 4 are met; criteria 1, 2, 5 (and the live run of 4) need a deployed `blackbox_exporter` + an NQ scrape loop — a deploy-session task, no longer a missing data path.

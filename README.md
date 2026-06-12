@@ -53,7 +53,7 @@ nq-blackbox/
     NQ_INTEGRATION.md        — how blackbox samples flow into NQ; the provenance precondition
 ```
 
-All non-doc files are currently **stubs**. They name shape, they do not run anything. Future commits in this repo will fill them in as probes are designed and the Linode exporter is brought online.
+`blackbox.yml` and `targets/*.yml` are currently **stubs** (no probe is promoted until its full 5-criterion path holds — see `docs/PROBE_CATALOG.md`). `scripts/smoke_probe.sh` is **implemented** (2026-06-12): it runs the full ingestion-path contract with distinct exit codes per incident class. The NQ-side provenance precondition is also closed (notquery migration 058 — provenance is now queryable, not wire-only). What remains for the first probe promotion is a deployed `blackbox_exporter` + an NQ scrape loop (a deploy-session task), not a missing data path.
 
 ## What this repo is not
 
