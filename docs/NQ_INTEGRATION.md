@@ -24,7 +24,7 @@ How blackbox-exporter samples flow into NQ, and the discipline that keeps that f
 The path crosses three boundaries:
 
 1. **Probe → exporter exposition.** Blackbox does its own evaluation against the probe target and emits `probe_*` metrics in Prometheus text format on its `/metrics`-like `/probe` endpoint.
-2. **Exporter exposition → NQ samples.** NQ's Prometheus scraper (`crates/nq/src/collect/prometheus.rs`) parses the text into `MetricSample` instances. Parsing stays pure; provenance is stamped immediately after parse by `stamp_with_target` (notquery commit `1ea2000`).
+2. **Exporter exposition → NQ samples.** NQ's Prometheus scraper (`crates/nq/src/collect/prometheus.rs`) parses the text into `MetricSample` instances. Parsing stays pure; provenance is stamped immediately after parse by `stamp_with_target` (nq commit `1ea2000`).
 3. **NQ samples → operator queries.** Stored samples carry `name`, `labels`, `value`, `metric_type`, **and** `scrape_target_name` / `scrape_target_url`. SQL composition keys off the provenance fields.
 
 Each boundary fails differently. The smoke harness (`scripts/smoke_probe.sh` when implemented) must be able to distinguish them.
@@ -33,7 +33,7 @@ Each boundary fails differently. The smoke harness (`scripts/smoke_probe.sh` whe
 
 NQ's `MetricSample` must carry scrape-target provenance. Without it, two blackbox probes both emitting `probe_success` for different `target=` query parameters fuse into indistinguishable rows in NQ's store, and any SQL composition over them produces nonsense.
 
-**Status:** satisfied as of notquery commit `1ea2000` ("Stamp Prometheus scrape target provenance on MetricSample"). Each `MetricSample` now carries two optional fields:
+**Status:** satisfied as of nq commit `1ea2000` ("Stamp Prometheus scrape target provenance on MetricSample"). Each `MetricSample` now carries two optional fields:
 
 - `scrape_target_name: Option<String>` — the configured target name (e.g. `"blackbox_labelwatch_health"`)
 - `scrape_target_url: Option<String>` — the `/probe?...` URL the scraper hit
@@ -59,7 +59,7 @@ NQ ingests samples and stores them; that's the contract this lab depends on. Bey
 
 - **No automatic claims.** A `probe_success=0` sample does not, on its own, mint any claim in NQ. It is data.
 - **No automatic alerts.** This lab does not configure alerting. If alerts exist, they live elsewhere in operator policy.
-- **SQL composition is the next layer.** Operators may write queries that join probe samples with NQ's substrate state (services_current, monitored_dbs_current, warning_state, etc.); concrete candidates live in `notquery/docs/coverage/sql-composed-checks.md` — particularly `service_facade_inconsistency` and `dns_response_kind_correlated_with_service_status`.
+- **SQL composition is the next layer.** Operators may write queries that join probe samples with NQ's substrate state (services_current, monitored_dbs_current, warning_state, etc.); concrete candidates live in `nq/docs/coverage/sql-composed-checks.md` — particularly `service_facade_inconsistency` and `dns_response_kind_correlated_with_service_status`.
 - **Composed claims (if they ever land) live on the NQ side.** A future composed-claim family that consumes probe samples (e.g. a `service_facade_contradiction` claim kind) would be authored in NQ, not here. This repo stays at the witness altitude.
 
 ## Smoke test contract (when implemented)
@@ -88,7 +88,7 @@ The smoke harness names which incident class fired. Conflating them is the bug a
 - NQ does not mint composed claims from probe samples in this layer. SQL composition is the first place suspicion can be voiced; claim preflight is where suspicion becomes admissible refusal.
 - This repo does not deploy or supervise the exporter. Use systemd, container orchestration, whatever the host runs. Configuration that ships here is the exporter's own `blackbox.yml`, not a deployment manifest.
 
-## Related (in `notquery`)
+## Related (in `nq`)
 
 - `crates/nq-core/src/wire.rs` — `MetricSample` definition (provenance fields).
 - `crates/nq/src/collect/prometheus.rs` — `scrape_target` + `stamp_with_target` helpers.

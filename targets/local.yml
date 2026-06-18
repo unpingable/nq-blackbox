@@ -1,7 +1,7 @@
 # nq-blackbox: probe targets for the local host
 #
 # These map to NQ `prometheus_targets` entries (see
-# notquery/crates/nq-core/src/config.rs `PrometheusTarget`). Each
+# nq/crates/nq-core/src/config.rs `PrometheusTarget`). Each
 # entry hits the local blackbox exporter's /probe endpoint with
 # module= and target= query parameters.
 #

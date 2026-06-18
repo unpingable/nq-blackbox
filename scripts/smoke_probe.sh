@@ -7,7 +7,7 @@
 #      `probe_success 1` in the exposition body.
 #   3. NQ ingests the sample (next pulse, or already pulsed).
 #   4. the stored sample carries the expected scrape_target_name (provenance —
-#      queryable since notquery migration 058).
+#      queryable since nq migration 058).
 #   5. the probe content survives unaltered.
 #
 # Each failure is a DISTINCT incident class, reported as such. Conflating

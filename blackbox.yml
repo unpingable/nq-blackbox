@@ -21,6 +21,6 @@
 #
 # NQ does NOT interpret blackbox modules. It only ingests the
 # resulting `probe_*` metrics with scrape-target provenance
-# (see notquery commit 1ea2000).
+# (see nq commit 1ea2000).
 
 modules: {}

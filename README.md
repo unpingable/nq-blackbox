@@ -19,7 +19,7 @@ This repo owns probe configuration, target catalogs, smoke scripts, and (eventua
 
 > Raw witnesses observe facts. SQL composes suspicions. Claim preflight decides what those suspicions are allowed to mean.
 
-`nq-blackbox` operates at the **witness** altitude. Probes observe protocol-facing facts from a declared vantage. SQL composition of probe results with NQ substrate state lives in the consuming NQ tree (`notquery/docs/coverage/sql-composed-checks.md`). Claim-preflight refusal families (what those compositions are allowed to mean) live in NQ gap docs.
+`nq-blackbox` operates at the **witness** altitude. Probes observe protocol-facing facts from a declared vantage. SQL composition of probe results with NQ substrate state lives in the consuming NQ tree (`nq/docs/coverage/sql-composed-checks.md`). Claim-preflight refusal families (what those compositions are allowed to mean) live in NQ gap docs.
 
 ## Three probe buckets
 
@@ -35,7 +35,7 @@ What gets configured here is bounded by what each probe can honestly testify to,
 
 NQ's Prometheus scraper must stamp each ingested sample with the scrape target that produced it. Otherwise two blackbox probes both emitting `probe_success` for different `target=` parameters become indistinguishable in NQ's store, and SQL composition turns to soup.
 
-This precondition is **satisfied as of notquery commit `1ea2000`** ("Stamp Prometheus scrape target provenance on MetricSample"). `MetricSample` now carries `scrape_target_name` and `scrape_target_url`. Without this, the rest of the lab cannot compose cleanly. See [`docs/NQ_INTEGRATION.md`](docs/NQ_INTEGRATION.md) for the details.
+This precondition is **satisfied as of nq commit `1ea2000`** ("Stamp Prometheus scrape target provenance on MetricSample"). `MetricSample` now carries `scrape_target_name` and `scrape_target_url`. Without this, the rest of the lab cannot compose cleanly. See [`docs/NQ_INTEGRATION.md`](docs/NQ_INTEGRATION.md) for the details.
 
 ## Layout
 
@@ -53,7 +53,7 @@ nq-blackbox/
     NQ_INTEGRATION.md        — how blackbox samples flow into NQ; the provenance precondition
 ```
 
-`blackbox.yml` and `targets/*.yml` are currently **stubs** (no probe is promoted until its full 5-criterion path holds — see `docs/PROBE_CATALOG.md`). `scripts/smoke_probe.sh` is **implemented** (2026-06-12): it runs the full ingestion-path contract with distinct exit codes per incident class. The NQ-side provenance precondition is also closed (notquery migration 058 — provenance is now queryable, not wire-only). What remains for the first probe promotion is a deployed `blackbox_exporter` + an NQ scrape loop (a deploy-session task), not a missing data path.
+`blackbox.yml` and `targets/*.yml` are currently **stubs** (no probe is promoted until its full 5-criterion path holds — see `docs/PROBE_CATALOG.md`). `scripts/smoke_probe.sh` is **implemented** (2026-06-12): it runs the full ingestion-path contract with distinct exit codes per incident class. The NQ-side provenance precondition is also closed (nq migration 058 — provenance is now queryable, not wire-only). What remains for the first probe promotion is a deployed `blackbox_exporter` + an NQ scrape loop (a deploy-session task), not a missing data path.
 
 ## What this repo is not
 
@@ -66,7 +66,7 @@ nq-blackbox/
 
 ## Related
 
-- [`notquery`](https://github.com/unpingable/nq) — NQ proper, the consumer side of this lab. The precondition for safe composition (`MetricSample` scrape-target provenance) lives there.
+- [`nq`](https://github.com/unpingable/nq) — NQ proper, the consumer side of this lab. The precondition for safe composition (`MetricSample` scrape-target provenance) lives there.
 - Upstream blackbox exporter: <https://github.com/prometheus/blackbox_exporter>
 - NQ's `docs/coverage/sql-composed-checks.md` — composed-SQL-check workbench where probe results compose with substrate state at the SQL altitude.
 - NQ's `docs/CLAIM_ADMISSIBILITY_MATTERS.md` — why the three altitudes exist at all.
