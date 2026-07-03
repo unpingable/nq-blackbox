@@ -16,4 +16,24 @@
 #   labelwatch /health        — external view of a known watched app
 #   DNS A query for nq.zone   — cross-resolver/vantage DNS probe
 
-prometheus_targets: []
+# Promoted 2026-07-03 (VM deploy). Mirrors the entry added to the VM's NQ
+# publisher.json. blackbox_exporter runs on the Linode/VM (system-systemd
+# nq-blackbox.service, 127.0.0.1:9115), scraped by the VM's own NQ witness.
+#
+# VANTAGE HONESTY: the exporter is ON the VM and nq.neutral.zone is served by
+# Caddy on that SAME VM. So this probe exercises the full public-path stack
+# (public DNS resolution -> Caddy -> TLS -> public bind) but the vantage is
+# the VM itself — NOT a foreign-network vantage. It does NOT testify that
+# external users can reach the endpoint (see PROBE_CATALOG inadmissible
+# claims). A true off-network vantage is separate future infra.
+prometheus_targets:
+  - name: external_http_nq_neutralzone
+    module: http_2xx
+    target: https://nq.neutral.zone/
+    url: http://127.0.0.1:9115/probe?module=http_2xx&target=https://nq.neutral.zone/
+
+  # candidate (not wired — bare probe_success would collide with the probe
+  # above on this host until the identity migration lands):
+  # - name: labelwatch_health_localhost
+  #   module: http_2xx
+  #   target: http://127.0.0.1:<labelwatch-health-port>/health
