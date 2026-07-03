@@ -23,4 +23,31 @@
 # resulting `probe_*` metrics with scrape-target provenance
 # (see nq commit 1ea2000).
 
-modules: {}
+modules:
+  # http_2xx — bare HTTP/HTTPS reachability, accepts any 2xx.
+  # Success criterion (explicit, per PROBE_CATALOG promotion crit. 1):
+  # the target returned a 2xx status within timeout. Nothing else is
+  # asserted — no body match (that would be a vibes-check), no latency
+  # threshold. Testifies only: "probe under http_2xx from this vantage
+  # saw a 2xx at T."
+  http_2xx:
+    prober: http
+    timeout: 5s
+    http:
+      method: GET
+      valid_status_codes: []          # empty = default 2xx
+      preferred_ip_protocol: ip4
+      ip_protocol_fallback: false
+
+  # dns_a — DNS A-record lookup for nq.neutral.zone. For the dns prober,
+  # the /probe `target=` is the RESOLVER queried; `query_name` is the
+  # name looked up. Success = the resolver returned a non-error response
+  # for the A query within timeout. Testifies only: "resolver R returned
+  # an A answer for nq.neutral.zone at T" — NOT global DNS correctness.
+  dns_a:
+    prober: dns
+    timeout: 5s
+    dns:
+      query_name: nq.neutral.zone
+      query_type: A
+      preferred_ip_protocol: ip4

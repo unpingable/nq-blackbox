@@ -17,4 +17,26 @@
 #                  NQ already reports up
 #   new vantage:  TLS expiry probe of nq.neutral.zone
 
-prometheus_targets: []
+# Promoted 2026-07-03 (sushi-k prove-the-wheel deploy). These mirror the
+# entries added to sushi-k's NQ publisher.json. `name` is stamped by NQ as
+# scrape_target_name (provenance, migration 058); SQL composition keys off it.
+#
+# Collision note (PROBE_CATALOG crit. 4 caveat): blackbox /probe emits BARE
+# probe_success (no instance/job label), and NQ series identity is
+# (metric_name, labels_json) — so two targets both emitting probe_success
+# collapse to one series flagged scrape_target_collision=1 (ambiguous, not
+# laundered). Therefore only ONE bare-probe_success target is promoted
+# collision-free here; multi-target bare-metric promotion waits on the
+# deferred identity migration (nq NQ_SCRAPE_TARGET_IDENTITY_SCOPE).
+prometheus_targets:
+  - name: nq_aggregator_http_localhost
+    module: http_2xx
+    target: http://127.0.0.1:9848/
+    url: http://127.0.0.1:9115/probe?module=http_2xx&target=http://127.0.0.1:9848/
+
+  # candidate (not yet wired — would collide on bare probe_success with the
+  # http probe above until the identity migration lands):
+  # - name: dns_neutralzone_localhost
+  #   module: dns_a
+  #   target: 127.0.0.1            # resolver queried; query_name is in blackbox.yml
+  #   url: http://127.0.0.1:9115/probe?module=dns_a&target=127.0.0.1
